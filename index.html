@@ -2,42 +2,110 @@
 <html>
   <head>
     <meta charset='utf-8' />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dad Joke Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
     <style>
       body {
-        display: flex;
-        padding: 0;
-        margin: 0;
-        width: 100vw;
+        width: 70vw;
+        margin: 0 auto;
+        padding: 20px 0;
+        font-family: 'Major Mono Display', monospace;
+        background: linear-gradient(-45deg, rgb(85, 32, 16), rgb(88, 8, 39), rgb(5, 69, 92), rgb(9, 88, 70));
+        background-size: 400% 400%;
         height: 100vh;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
+        color: rgba(255, 255, 255, .1);
+        text-shadow: 0 0 1rem rgba(255, 255, 255, .8);
+        animation: Gradient 30s ease infinite;
+      }
+      @keyframes Gradient {
+        0% {
+          background-position: 0% 50%;
+          color: rgba(255, 255, 255, .1);
+        }
+        10% {
+          color: rgba(255, 255, 255, .4);
+        }
+        30% {
+          color: rgba(255, 255, 255, .2);
+        }
+        50% {
+          background-position: 100% 50%;
+          color: rgba(255, 255, 255, .9);
+        }
+        100% {
+          background-position: 0% 50%;
+          color: rgba(255, 255, 255, .1);
+        }
+      }
+      h1 {
+        font-size: 4rem;
+      }
+      p {
+        font-size: 2rem;
+      }
+      a, a:visited {
+        color: blue;
+      }
+      a:hover {
+        color: greenyellow;
       }
 
-      main {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        margin-top: 20px;
+      .jokeButton {
+        width: 200px;
+        padding: 15px;
+        font-size: 2rem;
+        border: 1px solid;
       }
 
-      h1, h2 {
-        font-weight: 500;
-        font-size: 32px;
+      .jokeButton:hover {
+        background-color: black;
+        cursor: pointer;
       }
 
-      h2 {
-        font-weight: 300;
-        font-size: 16px;
-      }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
   </head>
-  <body>
-    <img src="first-gh-deployment.svg" alt="First GitHub Deployment" title="First GitHub Deployment" height="50" width="184" />
-    <main>
-      <h1>Congratulations!</h1>
-      <h2>You just made your second GitHub deployment.</h2>
-      THANKS DAD
-    </main>
+  <body cz-shortcut-listen="true">
+    <h1 class='hero'>Dad Joke Challenge!</h1>
+    <div id='root'></div>
+    <script type='text/babel'>
+      class PageContainer extends React.Component {
+          constructor() {
+            super();
+            this.state = {jokeText: ''};
+          }
+
+          componentDidMount() {
+            this.fetchJoke();
+          }
+          fetchJoke = () => {
+            fetch('https://icanhazdadjoke.com/', {
+              headers: { 'Accept': 'application/json' }
+            })
+              .then(response => response.json())
+              .then(({joke}) => this.setState({jokeText: joke}));
+          }
+          render() {
+              return (
+                <div className="jokeContainer">
+                  <Joke text={this.state.jokeText} />
+                  <JokeButton handleClick={this.fetchJoke} />
+                </div>
+              );
+          }
+      }
+
+      const Joke = props => (<p className="joke">{props.text}</p>)
+      const JokeButton = props => (<div className="jokeButton" onClick={props.handleClick}>New Joke</div>)
+
+      ReactDOM.render(
+          <PageContainer />,
+          document.getElementById('root')
+      );
+    </script>
   </body>
 </html>
