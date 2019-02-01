@@ -51,14 +51,61 @@
       a:hover {
         color: greenyellow;
       }
+
+      .jokeButton {
+        width: 200px;
+        padding: 15px;
+        font-size: 2rem;
+        border: 1px solid;
+      }
+
+      .jokeButton:hover {
+        background-color: black;
+        cursor: pointer;
+      }
+
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
   </head>
   <body cz-shortcut-listen="true">
+    <h1 class='hero'>Dad Joke Challenge!</h1>
+    <div id='root'></div>
+    <script type='text/babel'>
+      class PageContainer extends React.Component {
+          constructor() {
+            super();
+            this.state = {jokeText: ''};
+          }
 
-    <h1>Dad Joke Challenge!</h1>
-    <p>
-      Hi Jokes, I'm Dad
-    </p>
+          componentDidMount() {
+            this.fetchJoke();
+          }
+          fetchJoke = () => {
+            fetch('https://icanhazdadjoke.com/', {
+              headers: { 'Accept': 'application/json' }
+            })
+              .then(response => response.json())
+              .then(({joke}) => this.setState({jokeText: joke}));
+          }
+          render() {
+              return (
+                <div className="jokeContainer">
+                  <Joke text={this.state.jokeText} />
+                  <JokeButton handleClick={this.fetchJoke} />
+                </div>
+              );
+          }
+      }
 
+      const Joke = props => (<p className="joke">{props.text}</p>)
+      const JokeButton = props => (<div className="jokeButton" onClick={props.handleClick}>New Joke</div>)
+
+      ReactDOM.render(
+          <PageContainer />,
+          document.getElementById('root')
+      );
+    </script>
   </body>
 </html>
